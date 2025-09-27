@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import type { SeoResult, Source } from '../types';
+import type { SeoResult, Source, KeywordData } from '../types';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable is not set.");
@@ -16,7 +16,10 @@ export const generateSeoContent = async (keyword: string): Promise<SeoResult> =>
       Main Keyword: "${keyword}"
 
       Based on your analysis of the latest search data for this keyword, provide a structured JSON response containing:
-      1.  "keywords": A list of 15-20 powerful, highly relevant keywords, sorted by importance. Include a mix of short-tail (1-3 words) and long-tail keywords.
+      1.  "keywords": A list of 15-20 powerful, highly relevant keywords, sorted by importance. For each keyword, provide an object with three properties:
+          a. "keyword": The keyword phrase.
+          b. "volume": A string representing the estimated monthly search volume (e.g., "10K - 100K", "500 - 2K", "< 100").
+          c. "suitability": A brief assessment of its suitability (e.g., "High", "Medium", "Good for long-tail").
       2.  "hashtags": An object with three keys:
           a. "english": A list of 10 strong hashtags in English.
           b. "arabic": A list of 10 strong hashtags in Arabic.
@@ -59,6 +62,7 @@ export const generateSeoContent = async (keyword: string): Promise<SeoResult> =>
     if (
         parsedResult &&
         Array.isArray(parsedResult.keywords) &&
+        parsedResult.keywords.every((k: any) => k.keyword && k.volume && k.suitability) &&
         parsedResult.hashtags &&
         Array.isArray(parsedResult.hashtags.english) &&
         Array.isArray(parsedResult.hashtags.arabic) &&

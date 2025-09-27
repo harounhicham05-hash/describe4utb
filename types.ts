@@ -3,8 +3,14 @@ export interface Source {
   uri: string;
 }
 
+export interface KeywordData {
+  keyword: string;
+  volume: string;
+  suitability: string;
+}
+
 export interface SeoResult {
-  keywords: string[];
+  keywords: KeywordData[];
   hashtags: {
     english: string[];
     arabic: string[];
